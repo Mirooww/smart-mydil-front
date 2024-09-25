@@ -1,0 +1,139 @@
+import React, { createContext, useContext } from "react";
+import { BrowserRouter as Router, Route, Routes, Navigate, useNavigate } from "react-router-dom";
+import { useAuth } from "./hook/useAuth";
+import "./index.css";
+
+// Import your components
+import Home from "./Home";
+import Login from "./pages/Login";
+import Register from "./pages/Register";
+import CreateArticle from "./pages/CreateArticle";
+import UpdateArticle from "./pages/UpdateArticle";
+import Reservation from "./pages/Reservation";
+
+const AuthContext = createContext(null);
+
+function AuthProvider({ children }) {
+   const auth = useAuth();
+   return <AuthContext.Provider value={auth}>{children}</AuthContext.Provider>;
+}
+
+export function useAuthContext() {
+   return useContext(AuthContext);
+}
+
+function Layout({ children }) {
+   const { isAuthenticated, role, logout } = useAuthContext();
+   const navigate = useNavigate();
+   const { user } = useAuth();
+   const handleLogout = () => {
+      logout();
+      navigate("/");
+   };
+
+   return (
+      <div className="w-screen h-screen p-4 flex justify-between bg-gray-700">
+         <div className="bg-white shadow-md rounded-lg p-4 w-64">
+            <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">SistaPlatsen</h3>
+
+            {isAuthenticated ? (
+               <div className="space-y-4">
+                  <h4 className="text-lg font-semibold text-gray-700">Profil</h4>
+                  <p className="text-gray-600">{user}</p>
+                  <button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
+                     Se déconnecter
+                  </button>
+               </div>
+            ) : (
+               <div className="mb-4">
+                  <button
+                     onClick={() => navigate("/login")}
+                     className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                  >
+                     Se connecter
+                  </button>
+               </div>
+            )}
+
+            <div className="space-y-4 mt-6">
+               <button
+                  onClick={() => navigate("/")}
+                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition duration-300"
+               >
+                  Articles
+               </button>
+
+               <button
+                  onClick={() => navigate("/reservation")}
+                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition duration-300"
+               >
+                  Réservations
+               </button>
+
+               {isAuthenticated && role === "admin" && (
+                  <button
+                     onClick={() => navigate("/create-article")}
+                     className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                  >
+                     Créer Article
+                  </button>
+               )}
+            </div>
+         </div>
+         <main className="shadow border rounded-lg h-full w-[calc(100%-17rem)] flex flex-col items-center overflow-auto bg-white">{children}</main>
+      </div>
+   );
+}
+
+function PrivateRoute({ children }) {
+   const { isAuthenticated, isLoading } = useAuthContext();
+
+   if (isLoading) {
+      return <div className="flex justify-center items-center h-full">Loading...</div>;
+   }
+
+   return isAuthenticated ? children : <Navigate to="/login" />;
+}
+
+export default function App() {
+   const token = localStorage.getItem("data");
+   const { userId } = useAuth();
+
+   return (
+      <AuthProvider>
+         <Router>
+            <Layout>
+               <Routes>
+                  <Route path="/" element={<Home token={token} />} />
+                  <Route path="/login" element={<Login />} />
+                  <Route path="/register" element={<Register />} />
+                  <Route
+                     path="/create-article"
+                     element={
+                        <PrivateRoute>
+                           <CreateArticle token={token} />
+                        </PrivateRoute>
+                     }
+                  />
+                  <Route
+                     path="/update-article/:id"
+                     element={
+                        <PrivateRoute>
+                           <UpdateArticle token={token} />
+                        </PrivateRoute>
+                     }
+                  />
+                  <Route
+                     path="/reservation"
+                     element={
+                        <PrivateRoute>
+                           <Reservation token={token} userId={userId} />
+                        </PrivateRoute>
+                     }
+                  />
+               </Routes>
+            </Layout>
+         </Router>
+      </AuthProvider>
+   );
+}
