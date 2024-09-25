@@ -70,6 +70,9 @@ export default function Home({ token }) {
             <div>{article.name}</div>
             <div>{article.description}</div>
             <div>{article.quantity}</div>
+            <div style={{ height: "100px", width: "100px" }}>
+               <img src={`http://localhost:4000/api${article.urlImage}`} alt="article" />
+            </div>
          </div>
          {isAuthenticated && role === "admin" && (
             <div className="flex justify-around bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-1">

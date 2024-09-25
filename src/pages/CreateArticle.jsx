@@ -6,32 +6,45 @@ export default function CreateArticle({ token }) {
    const [name, setName] = useState("");
    const [description, setDescription] = useState("");
    const [quantity, setQuantity] = useState(1);
+   const [image, setImage] = useState(null);
    const [errorMessage, setErrorMessage] = useState("");
    const [successMessage, setSuccessMessage] = useState("");
 
    const handleSubmit = async (e) => {
       e.preventDefault();
 
-      const newArticle = { type, name, description, quantity };
+      const formData = new FormData();
+      formData.append("type", type);
+      formData.append("name", name);
+      formData.append("description", description);
+      formData.append("quantity", quantity);
+      formData.append("image", image);
 
       try {
-         const response = await fetchData("article/", token, "POST", newArticle);
-         if (response) {
-            setSuccessMessage(response.message);
+         const response = await fetch("http://localhost:4000/api/article/", {
+            method: "POST",
+            headers: {
+               Authorization: `Bearer ${token}`,
+            },
+            body: formData,
+         });
+
+         const result = await response.json();
+         if (response.ok) {
+            setSuccessMessage(result.message);
             console.log(successMessage);
          } else {
-            setErrorMessage(response.error);
+            setErrorMessage(result.error);
             console.log(errorMessage);
          }
       } catch (error) {
-         setErrorMessage("Erreur lors de la création", error);
+         setErrorMessage("Erreur lors de la création");
          console.log(errorMessage);
       }
    };
 
    return (
       <div className="flex items-center justify-center bg-gray-100 py-12 px-4 sm:px-6 lg:px-8" style={{ height: "100%", width: "100%" }}>
-         {" "}
          <div className="max-w-md w-full space-y-8 bg-white p-10 rounded-xl shadow-md">
             <div>
                <h2 className="mt-6 text-center text-3xl font-extrabold text-gray-900">Créer un nouvel article</h2>
@@ -95,6 +108,19 @@ export default function CreateArticle({ token }) {
                         placeholder="Quantité"
                         value={quantity}
                         onChange={(e) => setQuantity(e.target.value)}
+                     />
+                  </div>
+                  <div>
+                     <label htmlFor="image" className="sr-only">
+                        Image de l'article
+                     </label>
+                     <input
+                        id="image"
+                        name="image"
+                        type="file"
+                        required
+                        className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-b-md focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 focus:z-10 sm:text-sm"
+                        onChange={(e) => setImage(e.target.files[0])}
                      />
                   </div>
                </div>

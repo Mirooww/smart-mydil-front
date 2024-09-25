@@ -10,6 +10,8 @@ import Register from "./pages/Register";
 import CreateArticle from "./pages/CreateArticle";
 import UpdateArticle from "./pages/UpdateArticle";
 import Reservation from "./pages/Reservation";
+import ShowUser from "./pages/ShowUser";
+import ShowUserReservation from "./pages/ShowUserReservation";
 
 const AuthContext = createContext(null);
 
@@ -71,12 +73,20 @@ function Layout({ children }) {
                </button>
 
                {isAuthenticated && role === "admin" && (
-                  <button
-                     onClick={() => navigate("/create-article")}
-                     className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
-                  >
-                     Créer Article
-                  </button>
+                  <>
+                     <button
+                        onClick={() => navigate("/create-article")}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                     >
+                        Créer Article
+                     </button>
+                     <button
+                        onClick={() => navigate("/show-user")}
+                        className="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-2 px-4 rounded transition duration-300"
+                     >
+                        Utilisateurs
+                     </button>
+                  </>
                )}
             </div>
          </div>
@@ -95,6 +105,14 @@ function PrivateRoute({ children }) {
    return isAuthenticated ? children : <Navigate to="/login" />;
 }
 
+function PrivateRouteAdmin({ children }) {
+   const { isAuthenticated, isLoading, role } = useAuthContext();
+   if (isLoading) {
+      return <div className="flex justify-center items-center h-full">Loading...</div>;
+   }
+
+   return isAuthenticated && role === "admin" ? children : <Navigate to="/" />;
+}
 export default function App() {
    const token = localStorage.getItem("data");
    const { userId } = useAuth();
@@ -110,17 +128,17 @@ export default function App() {
                   <Route
                      path="/create-article"
                      element={
-                        <PrivateRoute>
+                        <PrivateRouteAdmin>
                            <CreateArticle token={token} />
-                        </PrivateRoute>
+                        </PrivateRouteAdmin>
                      }
                   />
                   <Route
                      path="/update-article/:id"
                      element={
-                        <PrivateRoute>
+                        <PrivateRouteAdmin>
                            <UpdateArticle token={token} />
-                        </PrivateRoute>
+                        </PrivateRouteAdmin>
                      }
                   />
                   <Route
@@ -129,6 +147,22 @@ export default function App() {
                         <PrivateRoute>
                            <Reservation token={token} userId={userId} />
                         </PrivateRoute>
+                     }
+                  />
+                  <Route
+                     path="/show-user"
+                     element={
+                        <PrivateRouteAdmin>
+                           <ShowUser token={token} userId={userId} />
+                        </PrivateRouteAdmin>
+                     }
+                  />
+                  <Route
+                     path="/show-user/:id"
+                     element={
+                        <PrivateRouteAdmin>
+                           <ShowUserReservation token={token} userId={userId} />
+                        </PrivateRouteAdmin>
                      }
                   />
                </Routes>
