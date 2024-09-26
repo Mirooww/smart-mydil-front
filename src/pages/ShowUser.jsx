@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuthContext } from "../App";
 import fetchData from "../hook/fetchData";
-import { useAuth } from "../hook/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function ShowUser({ token }) {
@@ -9,7 +8,6 @@ export default function ShowUser({ token }) {
    const [users, setUsers] = useState([]);
    const [successMessage, setSuccessMessage] = useState("");
    const [errorMessage, setErrorMessage] = useState("");
-   const { userId } = useAuth();
    const navigate = useNavigate();
 
    const fetchAllData = useCallback(async () => {

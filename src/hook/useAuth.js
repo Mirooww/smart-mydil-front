@@ -32,13 +32,17 @@ export function useAuth() {
 
    const login = (token) => {
       try {
-         const decodedToken = jwtDecode(token); // Décoder et valider le token lors de la connexion
+         const decodedToken = jwtDecode(token);
          localStorage.setItem("data", token);
-         setRole(decodedToken.role); // Stocke le rôle
+         setRole(decodedToken.role);
+         setUserId(decodedToken.id);
+         setUser(decodedToken.username);
          setIsAuthenticated(true);
       } catch (error) {
          console.error("Invalid token", error);
          setRole(null);
+         setUserId(null);
+         setUser(null);
          setIsAuthenticated(false);
       }
    };

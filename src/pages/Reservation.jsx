@@ -46,29 +46,31 @@ export default function Reservation({ token }) {
    };
 
    const ReservationHeader = () => (
-      <div className="flex w-full justify-around items-center bg-gray-100 p-2 rounded-t-lg font-semibold">
-         {isAuthenticated && <div className="w-1/3 text-center">Action</div>}
-         <div className="w-1/3 text-center">Nom</div>
-         <div className="w-1/3 text-center">Image</div>
+      <div className="w-full mb-2">
+         <div className="flex w-full justify-around items-center bg-white border border-gray-200 rounded-t-lg">
+            <div className="w-1/3 text-center px-2 py-1  text-black rounded  transition duration-300">Rendre</div>
+
+            <div className="w-1/3 text-center px-2 py-1  text-black rounded  transition duration-300">Article</div>
+
+            <div className="w-1/3 text-center px-2 py-1  text-black rounded transition duration-300">Image</div>
+         </div>
       </div>
    );
 
    const ReservationItem = ({ reservation }) => (
-      <div className="w-full mb-2">
-         <div className="flex w-full justify-around items-center p-2 bg-white border border-gray-200 rounded-t-lg">
-            {isAuthenticated && (
-               <button
-                  onClick={() => handleReturn(reservation.idArticle)}
-                  className="w-1/3 text-center px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
-               >
-                  Rendre
-               </button>
-            )}
-            <div className="w-1/3 text-center">{reservation.article}</div>
+      <div className="flex w-full justify-around items-center bg-white border border-gray-200 rounded-t-lg mt-8">
+         {isAuthenticated && (
+            <button
+               onClick={() => handleReturn(reservation.idArticle)}
+               className="w-1/3 text-center px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+            >
+               Rendre
+            </button>
+         )}
+         <div className="w-1/3 text-center">{reservation.article}</div>
 
-            <div className="w-1/3 text-center" style={{ height: "100px", width: "100px" }}>
-               <img src={`http://localhost:4000/api${reservation.urlImage}`} alt="reservation" />
-            </div>
+         <div className="w-1/3 text-center flex justify-center">
+            <img src={`http://localhost:4000/api${reservation.urlImage}`} alt="article" style={{ height: "130px" }} />
          </div>
       </div>
    );

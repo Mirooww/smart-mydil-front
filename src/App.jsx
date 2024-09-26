@@ -25,9 +25,8 @@ export function useAuthContext() {
 }
 
 function Layout({ children }) {
-   const { isAuthenticated, role, logout } = useAuthContext();
+   const { isAuthenticated, role, logout, user } = useAuthContext();
    const navigate = useNavigate();
-   const { user } = useAuth();
    const handleLogout = () => {
       logout();
       navigate("/");
@@ -115,59 +114,66 @@ function PrivateRouteAdmin({ children }) {
 }
 export default function App() {
    const token = localStorage.getItem("data");
-   const { userId } = useAuth();
 
    return (
       <AuthProvider>
          <Router>
             <Layout>
-               <Routes>
-                  <Route path="/" element={<Home token={token} />} />
-                  <Route path="/login" element={<Login />} />
-                  <Route path="/register" element={<Register />} />
-                  <Route
-                     path="/create-article"
-                     element={
-                        <PrivateRouteAdmin>
-                           <CreateArticle token={token} />
-                        </PrivateRouteAdmin>
-                     }
-                  />
-                  <Route
-                     path="/update-article/:id"
-                     element={
-                        <PrivateRouteAdmin>
-                           <UpdateArticle token={token} />
-                        </PrivateRouteAdmin>
-                     }
-                  />
-                  <Route
-                     path="/reservation"
-                     element={
-                        <PrivateRoute>
-                           <Reservation token={token} userId={userId} />
-                        </PrivateRoute>
-                     }
-                  />
-                  <Route
-                     path="/show-user"
-                     element={
-                        <PrivateRouteAdmin>
-                           <ShowUser token={token} userId={userId} />
-                        </PrivateRouteAdmin>
-                     }
-                  />
-                  <Route
-                     path="/show-user/:id"
-                     element={
-                        <PrivateRouteAdmin>
-                           <ShowUserReservation token={token} userId={userId} />
-                        </PrivateRouteAdmin>
-                     }
-                  />
-               </Routes>
+               <AppRoutes token={token} />
             </Layout>
          </Router>
       </AuthProvider>
+   );
+}
+
+function AppRoutes({ token }) {
+   const { userId } = useAuthContext();
+
+   return (
+      <Routes>
+         <Route path="/" element={<Home token={token} />} />
+         <Route path="/login" element={<Login />} />
+         <Route path="/register" element={<Register />} />
+         <Route
+            path="/create-article"
+            element={
+               <PrivateRouteAdmin>
+                  <CreateArticle token={token} />
+               </PrivateRouteAdmin>
+            }
+         />
+         <Route
+            path="/update-article/:id"
+            element={
+               <PrivateRouteAdmin>
+                  <UpdateArticle token={token} />
+               </PrivateRouteAdmin>
+            }
+         />
+         <Route
+            path="/reservation"
+            element={
+               <PrivateRoute>
+                  <Reservation token={token} userId={userId} />
+               </PrivateRoute>
+            }
+         />
+         <Route
+            path="/show-user"
+            element={
+               <PrivateRouteAdmin>
+                  <ShowUser token={token} userId={userId} />
+               </PrivateRouteAdmin>
+            }
+         />
+         <Route
+            path="/show-user/:id"
+            element={
+               <PrivateRouteAdmin>
+                  <ShowUserReservation token={token} userId={userId} />
+               </PrivateRouteAdmin>
+            }
+         />
+      </Routes>
    );
 }

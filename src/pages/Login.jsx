@@ -1,7 +1,6 @@
 import React from "react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../hook/useAuth";
 import fetchData from "../hook/fetchData";
 import useWindowWidth from "../hook/useWindowWidth";
 import { useAuthContext } from "../App"; // Assurez-vous que le chemin d'importation est correct

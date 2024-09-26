@@ -1,15 +1,13 @@
 import React, { useEffect, useState, useCallback } from "react";
 import { useAuthContext } from "./App";
 import fetchData from "./hook/fetchData";
-import { useAuth } from "./hook/useAuth";
 import { useNavigate } from "react-router-dom";
 
 export default function Home({ token }) {
-   const { isAuthenticated, role } = useAuthContext();
+   const { isAuthenticated, role, userId } = useAuthContext();
    const [articles, setArticles] = useState([]);
    const [successMessage, setSuccessMessage] = useState("");
    const [errorMessage, setErrorMessage] = useState("");
-   const { userId } = useAuth();
    const navigate = useNavigate();
 
    const fetchAllData = useCallback(async () => {
@@ -47,11 +45,11 @@ export default function Home({ token }) {
 
    const ArticleHeader = () => (
       <div className="flex w-full justify-around items-center bg-gray-100 p-2 rounded-t-lg font-semibold">
-         {isAuthenticated && <div className="w-24 text-center">Action</div>}
-         <div>Type</div>
-         <div>Nom</div>
-         <div>Description</div>
-         <div>Quantité</div>
+         {isAuthenticated && <div className="w-1/5 text-center">Action</div>}
+         <div className="w-1/5 text-center">Type</div>
+         <div className="w-1/5 text-center">Nom</div>
+         <div className="w-1/5 text-center">Quantité</div>
+         <div className="w-1/5 text-center">Image</div>
       </div>
    );
 
@@ -61,18 +59,20 @@ export default function Home({ token }) {
             {isAuthenticated && (
                <button
                   onClick={() => handleReservate(article.id)}
-                  className="w-24 px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
+                  className="w-1/5 text-center bg-blue-500 text-white rounded hover:bg-blue-600 transition duration-300"
                >
                   Réserver
                </button>
             )}
-            <div>{article.type}</div>
-            <div>{article.name}</div>
-            <div>{article.description}</div>
-            <div>{article.quantity}</div>
-            <div style={{ height: "100px", width: "100px" }}>
-               <img src={`http://localhost:4000/api${article.urlImage}`} alt="article" />
+            <div className="w-1/5 text-center">{article.type}</div>
+            <div className="w-1/5 text-center">{article.name}</div>
+            <div className="w-1/5 text-center">{article.quantity}</div>
+            <div className="w-1/5 text-center flex justify-center">
+               <img src={`http://localhost:4000/api${article.urlImage}`} alt="article" style={{ height: "130px" }} />
             </div>
+         </div>
+         <div className="w-full text-left p-2" style={{ boxShadow: "0 0 0 1px", minHeight: "70px" }}>
+            {article.description}
          </div>
          {isAuthenticated && role === "admin" && (
             <div className="flex justify-around bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-1">
