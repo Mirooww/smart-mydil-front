@@ -6,8 +6,8 @@ import { useNavigate } from "react-router-dom";
 export default function Home({ token }) {
    const { isAuthenticated, role, userId } = useAuthContext();
    const [articles, setArticles] = useState([]);
-   const [successMessage, setSuccessMessage] = useState("");
-   const [errorMessage, setErrorMessage] = useState("");
+   const [successArticleId, setSuccessArticleId] = useState(null);
+   const [errorArticleId, setErrorArticleId] = useState(null);
    const navigate = useNavigate();
 
    const fetchAllData = useCallback(async () => {
@@ -15,7 +15,7 @@ export default function Home({ token }) {
       if (response) {
          setArticles(response.articles);
       } else {
-         setErrorMessage(response.error);
+         console.error("Une erreur s'est produite lors de la récupération des articles.");
       }
    }, [token]);
 
@@ -26,20 +26,24 @@ export default function Home({ token }) {
    const handleDelete = async (idArticle) => {
       const response = await fetchData(`article/${idArticle}`, token, "DELETE");
       if (response && response.success) {
-         setSuccessMessage(response.message);
+         setSuccessArticleId(idArticle); // Set the article ID with success
+         setErrorArticleId(null);
          fetchAllData();
       } else {
-         setErrorMessage("Une erreur s'est produite lors de la suppression de l'article.");
+         setSuccessArticleId(null);
+         setErrorArticleId(idArticle); // Set the article ID with error
       }
    };
 
    const handleReservate = async (idArticle) => {
       const response = await fetchData(`article/${idArticle}/reserved/${userId}`, token, "PATCH");
       if (response && response.success) {
-         setSuccessMessage(response.message);
+         setSuccessArticleId(idArticle);
+         setErrorArticleId(null);
          fetchAllData();
       } else {
-         setErrorMessage("Une erreur s'est produite lors de la réservation de l'article.");
+         setSuccessArticleId(null);
+         setErrorArticleId(idArticle);
       }
    };
 
@@ -74,6 +78,9 @@ export default function Home({ token }) {
          <div className="w-full text-left p-2" style={{ boxShadow: "0 0 0 1px", minHeight: "70px" }}>
             {article.description}
          </div>
+
+         {/* Afficher les messages de succès ou d'erreur pour cet article seulement */}
+
          {isAuthenticated && role === "admin" && (
             <div className="flex justify-around bg-gray-50 border border-t-0 border-gray-200 rounded-b-lg p-1">
                <button onClick={() => navigate(`/update-article/${article.id}`)} className="text-blue-500 hover:text-blue-700 transition duration-300">
@@ -84,6 +91,8 @@ export default function Home({ token }) {
                </button>
             </div>
          )}
+         {successArticleId === article.id && <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">Réservation réussie pour {article.name}</div>}
+         {errorArticleId === article.id && <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">Erreur lors de la réservation de {article.name}</div>}
       </div>
    );
 
@@ -97,9 +106,6 @@ export default function Home({ token }) {
                <ArticleItem key={article.id} article={article} />
             ))}
          </div>
-
-         {successMessage && <div className="mt-4 p-2 bg-green-100 text-green-700 rounded">{successMessage}</div>}
-         {errorMessage && <div className="mt-4 p-2 bg-red-100 text-red-700 rounded">{errorMessage}</div>}
       </div>
    );
 }
