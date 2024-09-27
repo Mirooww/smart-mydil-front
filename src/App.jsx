@@ -35,11 +35,14 @@ function Layout({ children }) {
    return (
       <div className="w-screen h-screen p-4 flex justify-between bg-gray-700">
          <div className="bg-white shadow-md rounded-lg p-4 w-64">
-            <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">SistaPlatsen</h3>
+            <div style={{ width: "100%", aspectRatio: "1/1", display: "flex", justifyContent: "center" }}>
+               <img src="/SmartMydil.svg" alt="logo SmartMyDil" />
+            </div>
+            <h3 className="text-2xl font-bold mb-4 text-center text-gray-800">SmartMydil</h3>
 
             {isAuthenticated ? (
                <div className="space-y-4">
-                  <h4 className="text-lg font-semibold text-gray-700">Profil</h4>
+                  <h4 className="text-lg font-semibold text-gray-700">Profil {role === "admin" && "administrateur"} </h4>
                   <p className="text-gray-600">{user}</p>
                   <button onClick={handleLogout} className="w-full bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded transition duration-300">
                      Se déconnecter
@@ -64,12 +67,14 @@ function Layout({ children }) {
                   Articles
                </button>
 
-               <button
-                  onClick={() => navigate("/reservation")}
-                  className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition duration-300"
-               >
-                  Réservations
-               </button>
+               {isAuthenticated && (
+                  <button
+                     onClick={() => navigate("/reservation")}
+                     className="w-full bg-gray-200 hover:bg-gray-300 text-gray-800 font-semibold py-2 px-4 rounded transition duration-300"
+                  >
+                     Réservations
+                  </button>
+               )}
 
                {isAuthenticated && role === "admin" && (
                   <>

@@ -21,7 +21,7 @@ export default function CreateArticle({ token }) {
       formData.append("image", image);
 
       try {
-         const response = await fetch("http://localhost:4000/api/article/", {
+         const response = await fetch("https://smart-mydil.nexum-dev.xyz/api/article/", {
             method: "POST",
             headers: {
                Authorization: `Bearer ${token}`,

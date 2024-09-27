@@ -70,14 +70,14 @@ export default function Reservation({ token }) {
          <div className="w-1/3 text-center">{reservation.article}</div>
 
          <div className="w-1/3 text-center flex justify-center">
-            <img src={`http://localhost:4000/api${reservation.urlImage}`} alt="article" style={{ height: "130px" }} />
+            <img src={`https://smart-mydil.nexum-dev.xyz/api${reservation.urlImage}`} alt="article" style={{ height: "130px" }} />
          </div>
       </div>
    );
 
    return (
       <div className="w-full max-w-4xl mx-auto p-4">
-         <h1 className="text-2xl font-bold mb-4 text-center">Liste d'reservations {isAuthenticated ? "connectés" : "non connectés"}</h1>
+         <h1 className="text-2xl font-bold mb-4 text-center">Liste des reservations </h1>
 
          <div className="bg-white shadow-md rounded-lg overflow-hidden">
             <ReservationHeader />

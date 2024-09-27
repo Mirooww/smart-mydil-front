@@ -15,7 +15,9 @@ export default async function fetchData(endpoint, token = null, method = "GET", 
          options.body = JSON.stringify(body);
       }
       //local
-      const BASE_URL = "http://localhost:4000/api";
+      // const BASE_URL = "http://localhost:4000/api";
+
+      const BASE_URL = "https://smart-mydil.nexum-dev.xyz/api";
 
       const response = await fetch(`${BASE_URL}/${endpoint}`, options);
 
